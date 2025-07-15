@@ -1,1 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Malla Interactiva Enfermería</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff0f5;
+      padding: 20px;
+    }
+    .semestre {
+      background-color: #f7e3ff;
+      border: 2px solid #e0b3ff;
+      border-radius: 16px;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+    }
+    .semestre h2 {
+      color: #b266ff;
+    }
+    .ramo {
+      margin: 5px 0;
+    }
+    .ramo input[type="checkbox"] {
+      margin-right: 8px;
+      accent-color: #ffb6c1;
+    }
+    .ramo.aprobado label {
+      text-decoration: line-through;
+      color: gray;
+    }
+    .ramo.locked {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Malla Interactiva Enfermería – Universidad del Alba</h1>
+
+  <div id="malla"></div>
+
+  <script>
+    const ramos = {
+      "Anatomía general": [],
+      "Biología e histología": [],
+      "Química general y orgánica": [],
+      "Introducción a la enfermería": [],
+      "Bases socioculturales": [],
+      "Tecnología e innovación": [],
+      "Primeros auxilios": [],
+      "Psicología general y del desarrollo": [],
+      "Bioquímica": ["Química general y orgánica"],
+      "Enfermería en el ciclo vital": ["Introducción a la enfermería"],
+      "Microbiología y parasitología": ["Biología e histología"],
+      "Fisiología general": ["Anatomía general", "Biología e histología"],
+      "Enfermería y comunidad I": ["Enfermería en el ciclo vital"],
+      "Salud publica y epidemiologia": [],
+      "Educación y promoción de la salud": ["Bases socioculturales", "Psicología general y del desarrollo"],
+      "Fundamentos de enfermería básica": ["Enfermería en el ciclo vital"],
+      "Habilidades comucacionales en enfermería": [],
+      "Enfermería y comunidad II": ["Enfermería y comunidad I"],
+      "Bioestadística": [],
+      "Enfermería básica aplicada": ["Fundamentos de enfermería básica", "Enfermería y comunidad II"],
+      "Fisiopatología": ["Fisiología general"],
+      "Farmacología": ["Bioquímica", "Fisiología general"],
+      "Ética en enfermería": [],
+      "Enfermería en medico quirúrgico": ["Fisiopatología", "Farmacología", "Enfermería básica aplicada"],
+      "Enfermería en salud mental y psiquiatría": ["Farmacología", "Enfermería básica aplicada"],
+      "ENFERMERIA EN MEDICINAS COMPLEMENTARIAS Y PRACTICAS DE BIENESTAR EN SALUD": [],
+      "METODOLOGIA DE LA INVESTIGACION I": ["Bioestadística"],
+      "DESARROLLO SOSTENIBLE": [],
+      "GESTION DEL CUIDADO ENFERMERO EN SALUD MENTAL Y PSIQUIATRIA": ["Enfermería en salud mental y psiquiatría"],
+      "GESTION DEL CUIDADOS ENFERMERO EN LA COMUNIDAD": ["Enfermería y comunidad II"],
+      "GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO": ["Enfermería en medico quirúrgico"],
+      "ENFERMERIA GERONTOGERIATRICA": ["Ética en enfermería"],
+      "GESTION EN ENFERMERIA I": ["Enfermería básica aplicada", "Bioestadística"],
+      "METODOLOGIA DE LA INVESTIGACION II": ["METODOLOGIA DE LA INVESTIGACION I"],
+      "INGLES TECNICO": [],
+      "ENFERMERIA PEDIATRICA Y NEONATOLOGIA": ["GESTION DEL CUIDADOS ENFERMERO EN LA COMUNIDAD", "GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO"],
+      "ENFERMERIA DE LA MUJER": ["GESTION DEL CUIDADOS ENFERMERO EN LA COMUNIDAD", "GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO"],
+      "ENFERMERIA EN URGENCIA": ["ENFERMERIA GERONTOGERIATRICA", "GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO"],
+      "GESTION DEL CUIDADO ENFERMERO EN GERONTOGERIATRIA": ["ENFERMERIA GERONTOGERIATRICA", "GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO", "GESTION DEL CUIDADOS ENFERMERO EN LA COMUNIDAD"],
+      "GESTION EN ENFERMERIA II": ["GESTION EN ENFERMERIA I"],
+      "SEMINARIO DE TESIS I": ["METODOLOGIA DE LA INVESTIGACION II"],
+      "RESPONSABILIDAD SOCIAL Y EMPRENDIMIENTO": [],
+      "ELECTIVO DE FORMACION PROFESIONAL": [],
+      "LEGISLACION EN SALUD": ["GESTION EN ENFERMERIA II"],
+      "BIOETICA EN ENFERMERIA": ["GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO"],
+      "GESTION DEL CUIDADO EN URGENCIA": ["ENFERMERIA EN URGENCIA"],
+      "GESTION DEL CUIDADO ENFERMERO EN PEDIATRIA": ["ENFERMERIA DE LA MUJER", "ENFERMERIA PEDIATRICA Y NEONATOLOGIA"],
+      "SEMINARIO DE TESIS II": ["SEMINARIO DE TESIS I"],
+      "PREPARACION PARA LA VIDA LABORAL": [],
+      "INTERNADO INTRAHOSPITALARIO": ["GESTION DEL CUIDADO EN URGENCIA", "GESTION DEL CUIDADO ENFERMERO EN PEDIATRIA"],
+      "INTERNADO COMUNITARIO": ["GESTION DEL CUIDADO EN URGENCIA", "GESTION DEL CUIDADO ENFERMERO EN PEDIATRIA"]
+    };
+
+    const semestres = [
+      ["Anatomía general", "Biología e histología", "Química general y orgánica", "Introducción a la enfermería", "Bases socioculturales", "Tecnología e innovación"],
+      ["Primeros auxilios", "Psicología general y del desarrollo", "Bioquímica", "Enfermería en el ciclo vital", "Microbiología y parasitología", "Ingles básico"],
+      ["Fisiología general", "Enfermería y comunidad I", "Salud publica y epidemiologia", "Educación y promoción de la salud", "Fundamentos de enfermería básica", "Habilidades comucacionales en enfermería"],
+      ["Enfermería y comunidad II", "Bioestadística", "Enfermería básica aplicada", "Fisiopatología", "Farmacología"],
+      ["Ética en enfermería", "Enfermería en medico quirúrgico", "Enfermería en salud mental y psiquiatría", "ENFERMERIA EN MEDICINAS COMPLEMENTARIAS Y PRACTICAS DE BIENESTAR EN SALUD", "METODOLOGIA DE LA INVESTIGACION I", "DESARROLLO SOSTENIBLE"],
+      ["GESTION DEL CUIDADO ENFERMERO EN SALUD MENTAL Y PSIQUIATRIA", "GESTION DEL CUIDADOS ENFERMERO EN LA COMUNIDAD", "GESTION DEL CUIDADO ENFERMERO EN MEDICOQUIRURGICO", "ENFERMERIA GERONTOGERIATRICA", "GESTION EN ENFERMERIA I", "METODOLOGIA DE LA INVESTIGACION II", "INGLES TECNICO"],
+      ["ENFERMERIA PEDIATRICA Y NEONATOLOGIA", "ENFERMERIA DE LA MUJER", "ENFERMERIA EN URGENCIA", "GESTION DEL CUIDADO ENFERMERO EN GERONTOGERIATRIA", "GESTION EN ENFERMERIA II", "SEMINARIO DE TESIS I", "RESPONSABILIDAD SOCIAL Y EMPRENDIMIENTO"],
+      ["ELECTIVO DE FORMACION PROFESIONAL", "LEGISLACION EN SALUD", "BIOETICA EN ENFERMERIA", "GESTION DEL CUIDADO EN URGENCIA", "GESTION DEL CUIDADO ENFERMERO EN PEDIATRIA", "SEMINARIO DE TESIS II", "PREPARACION PARA LA VIDA LABORAL"],
+      ["INTERNADO INTRAHOSPITALARIO", "INTERNADO COMUNITARIO"]
+    ];
+
+    const mallaDiv = document.getElementById("malla");
+    const estado = {};
+
+    function crearMalla() {
+      semestres.forEach((sem, i) => {
+        const semDiv = document.createElement("div");
+        semDiv.className = "semestre";
+        semDiv.innerHTML = `<h2>Semestre ${i + 1}</h2>`;
+        sem.forEach(ramo => {
+          const ramoDiv = document.createElement("div");
+          ramoDiv.className = "ramo";
+          ramoDiv.innerHTML = `
+            <input type="checkbox" id="${ramo}" onchange="marcar('${ramo}')">
+            <label for="${ramo}">${ramo}</label>
+          `;
+          semDiv.appendChild(ramoDiv);
+          estado[ramo] = false;
+        });
+        mallaDiv.appendChild(semDiv);
+      });
+      actualizarEstados();
+    }
+
+    window.marcar = function (ramo) {
+      const checkbox = document.getElementById(ramo);
+      estado[ramo] = checkbox.checked;
+      actualizarEstados();
+    };
+
+    function actualizarEstados() {
+      for (let ramo in estado) {
+        const prerreq = ramos[ramo] || [];
+        const cumplido = prerreq.every(r => estado[r]);
+        const checkbox = document.getElementById(ramo);
+        const div = checkbox.parentElement;
+        if (!cumplido && !estado[ramo]) {
+          checkbox.disabled = true;
+          div.classList.add("locked");
+        } else {
+          checkbox.disabled = false;
+          div.classList.remove("locked");
+        }
+        if (estado[ramo]) {
+          div.classList.add("aprobado");
+        } else {
+          div.classList.remove("aprobado");
+        }
+      }
+    }
+
+    crearMalla();
+  </script>
+</body>
+</html>
 
